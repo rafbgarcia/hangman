@@ -4,7 +4,9 @@ Humble implementation of hangman in go.
 #### Get your access token
 
 ```bash
-curl -X POST http://sup-hangman.appspot.com/players
+curl -X POST \
+     -H "Content-length: 0" \
+     http://sup-hangman.appspot.com/players
 ```
 
 
@@ -12,7 +14,8 @@ curl -X POST http://sup-hangman.appspot.com/players
 
 ```bash
 curl -X POST \
-     -H "Authorization: Basic <ACCESS_TOKEN>" \
+     -H "Content-length: 0" \
+     -H "Authorization: Basic YOUR_ACCESS_TOKEN" \
      http://sup-hangman.appspot.com/games
 ```
 
@@ -21,7 +24,7 @@ curl -X POST \
 
 ```bash
 curl -X GET \
-     -H "Authorization: Basic <ACCESS_TOKEN>" \
+     -H "Authorization: Basic YOUR_ACCESS_TOKEN" \
      http://sup-hangman.appspot.com/games
 ```
 
@@ -30,7 +33,7 @@ curl -X GET \
 
 ```bash
 curl -X GET \
-     -H "Authorization: Basic <ACCESS_TOKEN>" \
+     -H "Authorization: Basic YOUR_ACCESS_TOKEN" \
      http://sup-hangman.appspot.com/games/:id
 ```
 
@@ -39,8 +42,8 @@ curl -X GET \
 
 ```bash
 curl -X PUT \
-     -H "Authorization: Basic <ACCESS_TOKEN>" \
+     -H "Authorization: Basic YOUR_ACCESS_TOKEN" \
      -H "Content-type: application/json" \
-     -d '{"char":"n"}'` \
+     -d '{"char":"n"}' \
      http://sup-hangman.appspot.com/games/:id/guess
 ```
