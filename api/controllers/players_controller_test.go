@@ -9,6 +9,15 @@ import (
     "net/http"
     "github.com/drborges/goexpect"
     "strings"
+    "appengine"
+    "net/url"
+)
+
+const (
+    notificationBody = "Test notification"
+    POST = "POST"
+    PUT = "PUT"
+    GET = "GET"
 )
 
 type M map[string]interface{}
@@ -21,7 +30,7 @@ type Response struct {
 func TestPlayersController(t *testing.T) {
     expect := goexpect.New(t)
 
-    res := post("/players")
+    res := post("/players", M{})
 
     expect(res.code).ToBe(http.StatusCreated)
     expect(len(res.body["access_token"].(string)) > 0).ToBe(true)
@@ -30,12 +39,26 @@ func TestPlayersController(t *testing.T) {
 
 // Extract this
 
-func post(url string) Response {
+func post(rawUrl string, body M) Response {
+    return makeRequestFromFn(POST, body, func(c appengine.Context, req *http.Request)  {
+        url, _ := url.Parse(rawUrl)
+        req.URL = url
+    })
+}
+
+func makeRequestFromFn(method string, body M,  fn func(appengine.Context, *http.Request)) Response {
     aeinstance, _ := aetest.NewInstance(nil)
     defer aeinstance.Close()
 
-    req, _ := aeinstance.NewRequest("POST", url, strings.NewReader(""))
+    bytes, _ := json.Marshal(body)
+    reader := strings.NewReader(string(bytes))
+
+    req, _ := aeinstance.NewRequest(method, "/", reader)
     req.Header.Add("Content-type", "application/json")
+
+    c := appengine.NewContext(req)
+
+    fn(c, req)
 
     return send(req)
 }
