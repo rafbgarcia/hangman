@@ -65,7 +65,6 @@ func (this GamesController) Guess(ginContext *gin.Context) {
     })
 
     if err.Any() {
-        this.RespondWith.UnexpectedError(err)
         ginContext.AbortWithStatus(http.StatusNotModified)
         return
     }
